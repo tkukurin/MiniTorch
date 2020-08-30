@@ -1,0 +1,36 @@
+import os, sys
+if len(sys.argv) == 2 and sys.argv[1] == 'c':
+  print('=== Custom ===')
+  os.system('python -m pytest tests/ -m task_custom')
+  sys.exit(0)
+if len(sys.argv) == 1 or int(sys.argv[1]) == 0:
+  print('')
+  print('=================')
+  print('Skipping flake')
+  print('=================')
+  # os.system('flake8 --ignore "N801, E203, E266, E501, W503, F812, E741, N803, N802, N806" minitorch/ tests/ project/')
+if len(sys.argv) == 1 or int(sys.argv[1]) == 1:
+  print('')
+  print('=================')
+  print('Running test 1')
+  print('=================')
+  os.system('python -m pytest tests/ -m task2_1')
+if len(sys.argv) == 1 or int(sys.argv[1]) == 2:
+  print('')
+  print('=================')
+  print('Running test 2')
+  print('=================')
+  os.system('python -m pytest tests/ -m task2_2')
+if len(sys.argv) == 1 or int(sys.argv[1]) == 3:
+  print('')
+  print('=================')
+  print('Running test 3')
+  print('=================')
+  os.system('python -m pytest tests/ -m task2_3')
+if len(sys.argv) == 1 or int(sys.argv[1]) == 4:
+  print('')
+  print('=================')
+  print('Running test 4')
+  print('=================')
+  os.system('python -m pytest tests/ -m task2_4')
+
