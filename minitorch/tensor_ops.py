@@ -7,6 +7,12 @@ from .tensor_data import (
   MAX_DIMS,
 )
 
+def nxt(xs, shape):
+  for i in range(len(xs)):
+    xs[i] = (xs[i]+1) % shape[i]
+    if xs[i]: break
+  return i, xs
+
 
 def tensor_map(fn):
   """
@@ -25,17 +31,11 @@ def tensor_map(fn):
    oi = np.zeros_like(out_strides)
    ii = np.zeros_like(in_strides)
 
-   def nxt(xs, shape):
-    for i in range(len(xs)):
-     xs[i] = (xs[i]+1) % shape[i]
-     if xs[i] > 0: break
-    return xs
-
    for pos in range(np.prod(out_shape)):
     incurr = in_storage[index_to_position(ii, in_strides)]
     out[index_to_position(oi, out_strides)] = fn(incurr)
-    oi = nxt(oi, out_shape)
-    ii = nxt(ii, in_shape)
+    _, oi = nxt(oi, out_shape)
+    _, ii = nxt(ii, in_shape)
 
   return _map
 
@@ -76,26 +76,13 @@ def tensor_zip(fn):
     ai = np.zeros_like(a_strides)
     bi = np.zeros_like(b_strides)
 
-    a1 = [i for i,ash in enumerate(a_shape) if ash==1]
-    b1 = [i for i,bsh in enumerate(b_shape) if bsh==1]
-    #print(a1,b1)
-
-    def nxt(xs, shape):
-      for i in range(len(xs)):
-        xs[i] = (xs[i]+1) % shape[i]
-        if xs[i]: break
-      return xs
-
     for pos in range(np.prod(out_shape)):
       acurr = a[index_to_position(ai, a_strides)]
       bcurr = b[index_to_position(bi, b_strides)]
       out[index_to_position(oi, out_strides)] = fn(acurr, bcurr)
-      oi = nxt(oi, out_shape)
-      ai = np.copy(oi)
-      bi = np.copy(oi)
-      ai[a1] = 0
-      bi[b1] = 0
-      #print(ai,bi)
+      _, oi = nxt(oi, out_shape)
+      _, ai = nxt(ai, a_shape)
+      _, bi = nxt(bi, b_shape)
 
   return _zip
 
@@ -137,12 +124,6 @@ def tensor_reduce(fn):
     oi = np.zeros_like(out_strides)
     ai = np.zeros_like(a_strides)
     ch_ix = 0
-
-    def nxt(xs, shape):
-      for i in range(len(xs)):
-        xs[i] = (xs[i]+1) % shape[i]
-        if xs[i]: break
-      return i, xs
 
     for pos in range(np.prod(a_shape)):
       oi_pos = index_to_position(oi, out_strides)
